@@ -69,6 +69,7 @@ test_db_storage.py'])
 
 
 class TestDbStorage(unittest.TestCase):
+    """Tests to check all methods of DBStorage class"""
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def setUp(self):
         """Setup db"""
