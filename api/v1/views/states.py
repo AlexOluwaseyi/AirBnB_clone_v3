@@ -5,7 +5,7 @@ all default RESTFul API actions
 from api.v1.views import app_views
 from models.state import State
 from models import storage
-from flask import abort, request, jsonify
+from flask import abort, request
 
 
 @app_views.route("/states", methods=["GET"], strict_slashes=False)
@@ -21,7 +21,7 @@ def get_states():
     return (states_list, 200)
 
 
-@app_views.route("/states/<string:state_id>", methods=["GET"],
+@app_views.route("/states/<state_id>", methods=["GET"],
                  strict_slashes=False)
 def get_state(state_id=None):
     """
@@ -35,7 +35,7 @@ def get_state(state_id=None):
     return (state_dict, 200)
 
 
-@app_views.route("/states/<string:state_id>", methods=["DELETE"],
+@app_views.route("/states/<state_id>", methods=["DELETE"],
                  strict_slashes=False)
 def delete_states(state_id=None):
     """
@@ -66,7 +66,7 @@ def create_state():
     return (new_state_dict, 201)
 
 
-@app_views.route("/states/<string:state_id>", methods=["PUT"],
+@app_views.route("/states/<state_id>", methods=["PUT"],
                  strict_slashes=False)
 def update_state(state_id):
     """ Updates a State object """
