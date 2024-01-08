@@ -23,7 +23,7 @@ def get_states():
 
 @app_views.route("/states/<state_id>", methods=["GET"],
                  strict_slashes=False)
-def get_state(state_id=None):
+def get_state(state_id):
     """
     Retrieves a State object:
         GET /api/v1/states/<state_id>
@@ -37,7 +37,7 @@ def get_state(state_id=None):
 
 @app_views.route("/states/<state_id>", methods=["DELETE"],
                  strict_slashes=False)
-def delete_states(state_id=None):
+def delete_states(state_id):
     """
     Deletes a State object:
         DELETE /api/v1/states/<state_id>
