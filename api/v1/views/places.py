@@ -42,7 +42,7 @@ def delete_place(place_id):
     Deletes a Place object: DELETE /api/v1/places/<place_id>
     """
     place_to_delete = storage.get(Place, place_id)
-    if place is None:
+    if place_to_delete is None:
         abort(404)
 
     storage.delete(place_to_delete)
@@ -75,6 +75,7 @@ def create_place(city_id):
     if 'name' not in response:
         abort(400, description="Missing name")
 
+    response["city_id"] = city_id
     place = Place(**response)
     place.save()
     return jsonify(place.to_dict()), 201
