@@ -28,11 +28,11 @@ def get_state(state_id=None):
     Retrieves a State object:
         GET /api/v1/states/<state_id>
     """
-    try:
-        state = storage.get(State, state_id)
-        return (state.to_dict(), 200)
-    except Exception:
+    state = storage.get(State, state_id)
+    if state is None:
         abort(404)
+    state_dict = state.to_dict()
+    return (state_dict, 200)
 
 
 @app_views.route("/states/<string:state_id>", methods=["DELETE"],
@@ -42,36 +42,28 @@ def delete_states(state_id=None):
     Deletes a State object:
         DELETE /api/v1/states/<state_id>
     """
-    if state_id is None:
+    state_to_delete = storage.get(State, state_id)
+    if state_to_delete is None:
         abort(404)
-
-    try:
-        state = storage.get(State, state_id)
-        if state is None:
-            abort(404)
-        storage.delete(state)
-        storage.save()
-        return ({}, 200)
-    except Exception:
-        abort(404)
+    storage.delete(state_to_delete)
+    storage.save()
+    return ({}, 200)
 
 
 @app_views.route("/states", methods=["POST"], strict_slashes=False)
 def create_state():
     """ Add new State """
-    try:
-        response = request.get_json()
-        if response is None:
-            abort(400, description="Not a JSON")
+    response = request.get_json()
+    if response is None:
+        abort(400, description="Not a JSON")
 
-        if 'name' not in response:
-            abort(400, description="Missing name")
+    if 'name' not in response:
+        abort(400, description="Missing name")
 
-        new_state = State(**response)
-        new_state.save()
-        return (new_state.to_dict(), 201)
-    except Exception:
-        abort(400)
+    new_state = State(**response)
+    new_state.save()
+    new_state_dict = new_state.to_dict()
+    return (new_state_dict, 201)
 
 
 @app_views.route("/states/<string:state_id>", methods=["PUT"],
@@ -80,23 +72,18 @@ def update_state(state_id):
     """ Updates a State object """
     attr_list = ['id', 'created_at', 'updated_at']
 
-    if state_id is None:
-        abort(404)
-
     state = storage.get(State, state_id)
 
     if state is None:
         abort(404)
 
-    try:
-        response = request.get_json()
-        if response is None:
-            abort(400, description="Not a JSON")
+    response = request.get_json()
+    if response is None:
+        abort(400, description="Not a JSON")
 
-        for key, data in response.items():
-            if key not in attr_list:
-                setattr(state, key, data)
-        state.save()
-        return (state.to_dict(), 200)
-    except Exception:
-        abort(400)
+    for key, data in response.items():
+        if key not in attr_list:
+            setattr(state, key, data)
+    state.save()
+    state_dict = state.to_dict()
+    return (state_dict, 200)
