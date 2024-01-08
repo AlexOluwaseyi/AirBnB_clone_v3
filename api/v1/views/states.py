@@ -72,6 +72,7 @@ def create_state():
                  strict_slashes=False)
 def update_state(state_id):
     """ Updates a State object """
+    attr_list = ['id', 'created_at', 'updated_at']
     response = request.get_json()
 
     if not request.is_json:
@@ -80,7 +81,10 @@ def update_state(state_id):
     all_states = storage.all(State)
     for state in all_states.values():
         if state.id == state_id:
-            state.name = response.get('name')
+            for key, data in response.items():
+                if key not in attr_list:
+                    setattr(state, key, data)
             state.save()
+            return (state.to_dict(), 200)
     else:
         abort(404)
