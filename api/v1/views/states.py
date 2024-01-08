@@ -5,7 +5,7 @@ all default RESTFul API actions
 from api.v1.views import app_views
 from models.state import State
 from models import storage
-from flask import abort, request
+from flask import abort, request, jsonify
 
 
 @app_views.route("/states", methods=["GET"], strict_slashes=False)
@@ -18,7 +18,7 @@ def get_states():
     states_list = []
     for state in all_states.values():
         states_list.append(state.to_dict())
-    return (states_list, 200)
+    return jsonify(states_list), 200
 
 
 @app_views.route("/states/<state_id>", methods=["GET"],
@@ -32,7 +32,7 @@ def get_state(state_id=None):
     if state is None:
         abort(404)
     state_dict = state.to_dict()
-    return (state_dict, 200)
+    return jsonify(state_dict), 200
 
 
 @app_views.route("/states/<state_id>", methods=["DELETE"],
@@ -47,7 +47,7 @@ def delete_states(state_id=None):
         abort(404)
     storage.delete(state_to_delete)
     storage.save()
-    return ({}, 200)
+    return jsonify({}), 200
 
 
 @app_views.route("/states", methods=["POST"], strict_slashes=False)
@@ -63,7 +63,7 @@ def create_state():
     new_state = State(**response)
     new_state.save()
     new_state_dict = new_state.to_dict()
-    return (new_state_dict, 201)
+    return jsonify(new_state_dict), 201
 
 
 @app_views.route("/states/<state_id>", methods=["PUT"],
@@ -86,4 +86,4 @@ def update_state(state_id):
             setattr(state, key, data)
     state.save()
     state_dict = state.to_dict()
-    return (state_dict, 200)
+    return jsonify(state_dict), 200
