@@ -18,7 +18,7 @@ def get_states(state_id=None):
         GET /api/v1/states/<state_id>
     """
     all_states = storage.all(State)
-    if state_id == None:
+    if state_id is None:
         states_list = []
         for state in all_states.values():
             states_list.append(state.to_dict())
@@ -26,7 +26,7 @@ def get_states(state_id=None):
     else:
         for state in all_states.values():
             if state.id == state_id:
-                return(state.to_dict(), 200)
+                return (state.to_dict(), 200)
         else:
             abort(404)
 
@@ -39,14 +39,14 @@ def delete_states(state_id=None):
         DELETE /api/v1/states/<state_id>
     """
     all_states = storage.all(State)
-    if state_id == None:
+    if state_id is None:
         abort(404)
     else:
         for state in all_states.values():
             if state.id == state_id:
                 state.delete()
                 storage.save()
-                return({}, 200)
+                return ({}, 200)
         else:
             abort(404)
 
@@ -56,11 +56,11 @@ def create_state():
     """ Add new State """
     response = request.get_json()
 
-    if not request.is_json:
-        abort(400)
+    if response is None:
+        abort(400, description="Not a JSON")
 
-    if 'name' not in response:
-        abort(400, "Missing name")
+    if 'name' not in response.keys():
+        abort(400, description="Missing name")
 
     new_state = State()
     new_state.name = response.get('name')
@@ -75,8 +75,8 @@ def update_state(state_id):
     attr_list = ['id', 'created_at', 'updated_at']
     response = request.get_json()
 
-    if not request.is_json:
-        abort(400)
+    if response is None:
+        abort(400, description="Not a JSON")
 
     all_states = storage.all(State)
     for state in all_states.values():
