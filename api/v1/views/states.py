@@ -47,7 +47,9 @@ def delete_states(state_id=None):
 
     try:
         state = storage.get(State, state_id)
-        state.delete()
+        if state is None:
+            abort(404)
+        storage.delete(state)
         storage.save()
         return ({}, 200)
     except Exception:
@@ -59,15 +61,17 @@ def create_state():
     """ Add new State """
     try:
         response = request.get_json()
+        if response is None:
+            abort(400, description="Not a JSON")
+
         if 'name' not in response:
             abort(400, description="Missing name")
 
-        new_state = State()
-        new_state.name = response.get('name')
+        new_state = State(**response)
         new_state.save()
         return (new_state.to_dict(), 201)
     except Exception:
-        abort(400, description="Not a JSON")
+        abort(400)
 
 
 @app_views.route("/states/<string:state_id>", methods=["PUT"],
@@ -81,15 +85,18 @@ def update_state(state_id):
 
     state = storage.get(State, state_id)
 
-    if not state:
+    if state is None:
         abort(404)
 
     try:
         response = request.get_json()
+        if response is None:
+            abort(400, description="Not a JSON")
+
         for key, data in response.items():
             if key not in attr_list:
                 setattr(state, key, data)
         state.save()
         return (state.to_dict(), 200)
     except Exception:
-        abort(400, description="Not a JSON")
+        abort(400)
