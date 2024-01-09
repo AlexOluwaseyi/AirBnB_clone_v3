@@ -26,10 +26,10 @@ app = Flask(__name__)
 def get_all_user():
     """ Get list of user in User object"""
     # Use the get method to get states based on state_id
-    user = storage.all(user)
+    users = storage.all(user)
 
     # If state not found (or incorrect ID)
-    if user is None:
+    if users is None:
         abort(404)
 
     allUser = [eachUser.to_dict() for eachUser in users]
@@ -46,10 +46,10 @@ def get_user(user_id):
     if not user:
         abort(404)
 
-    return jsonify(user)
+    return jsonify(user.to_dict())
 
 
-@app_views.route("/users/<user_id>/", methods=['DELETE'], strick_slashes=False)
+@app_views.route("/users/<user_id>/", methods=['DELETE'], strict_slashes=False)
 def del_user(user_id):
     """Deletes a User object"""
     # Use the get method to get the user with user_id
@@ -66,7 +66,7 @@ def del_user(user_id):
     return jsonify({}), 200
 
 
-@app_views.route("/users/", methods=['POST'], strick_slashes=False)
+@app_views.route("/users/", methods=['POST'], strict_slashes=False)
 def create_user():
     """Creates a User and returns the user with a status code of 201"""
     # Get data for new user
@@ -88,7 +88,7 @@ def create_user():
     storage.new(new_user)
     storage.save()
 
-    return jsonify(new_user), 201
+    return jsonify(new_user.to_dict()), 201
 
 
 @app_views.route("/users/<user_id>", methods=['PUT'], strict_slashes=False)
