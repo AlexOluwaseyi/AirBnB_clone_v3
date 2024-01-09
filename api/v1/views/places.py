@@ -25,7 +25,8 @@ def get_places(city_id):
     return jsonify(places_list), 200
 
 
-@app_views.route("/places/<place_id>", methods=["GET"], strict_slashes=False)
+@app_views.route("/places/<place_id>",
+                 methods=["GET"], strict_slashes=False)
 def get_place(place_id):
     """
     Retrieves a Place object. : GET /api/v1/places/<place_id>
@@ -36,7 +37,8 @@ def get_place(place_id):
     return jsonify(place.to_dict()), 200
 
 
-@app_views.route("/places/<place_id>", methods=["DELETE"], strict_slashes=False)
+@app_views.route("/places/<place_id>",
+                 methods=["DELETE"], strict_slashes=False)
 def delete_place(place_id):
     """
     Deletes a Place object: DELETE /api/v1/places/<place_id>
@@ -81,7 +83,8 @@ def create_place(city_id):
     return jsonify(place.to_dict()), 201
 
 
-@app_views.route("/places/<place_id>", methods=["PUT"], strict_slashes=False)
+@app_views.route("/places/<place_id>",
+                 methods=["PUT"], strict_slashes=False)
 def update_place(place_id):
     """
     Updates a Place object: PUT /api/v1/places/<place_id>
