@@ -108,7 +108,7 @@ def update_user(user_id):
     for key, value in data.items():
         if key not in ['id', 'email', 'created_at', 'updated_at']:
             if key is "password":
-                value = hashlib.md5(value.encode()).hexdigest()
+                value = hashlib.md5(value)
             setattr(user, key, value)
 
     storage.save()
