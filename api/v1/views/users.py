@@ -79,7 +79,7 @@ def create_user():
     if 'password' not in data:
         abort(400, 'Missing password')
     if 'password' in data:
-        data['password'] = hashlib.md5(data['password'])
+        data['password'] = hashlib.md5(data['password'].encode()).hexdigest()
 
     # Create a new user from the User model
     new_user = User(**data)
@@ -110,7 +110,7 @@ def update_user(user_id):
     for key, value in data.items():
         if key not in ['id', 'email', 'created_at', 'updated_at']:
             if key == "password":
-                value = hashlib.md5(value)
+                value = hashlib.md5(value.encode()).hexdigest()
             setattr(user, key, value)
 
     storage.save()
