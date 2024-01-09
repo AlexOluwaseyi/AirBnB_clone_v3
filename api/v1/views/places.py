@@ -3,6 +3,8 @@
 all default RESTFul API actions
 """
 from api.v1.views import app_views
+from models.state import State
+from models.amenity import Amenity
 from models.city import City
 from models.place import Place
 from models.user import User
@@ -103,3 +105,55 @@ def update_place(place_id):
             setattr(place, key, data)
     place.save()
     return jsonify(place.to_dict()), 200
+
+
+@app_views.route("/places_search/", methods=['POST'], strict_slashes=False)
+def places_search():
+    """ Retrieves all Place objects depending on the JSON in the request body.
+    JSON can contain 3 optional keys:
+    - states: list of State ids
+    - cities: list of City ids
+    - amenities: list of Amenity ids
+    """
+
+    data = request.get_json()
+
+    # Checks if data is JSON
+    if not data:
+        abort(400, 'Not a JSON')
+
+    states_ids = data.get("states", [])
+    cities_ids = data.get("cities", [])
+    amenities_ids = data.get("amenities", [])
+
+    places = []
+
+    # Checks if JSON keys has states, cities and/or amenities
+    # Retrieves all places if not
+    if not states_ids and not cities_ids and not amenities_ids:
+        places = storage.all(Place).values()
+
+    else:
+        # Retrieve places based on states
+        for state_id in states_ids:
+            state = storage.get(State, state_id)
+            if state:
+                places.extend(state.cities)
+
+        # Retrieve places based on cities
+        for city_id in cities_ids:
+            city = storage.get(City, city_id)
+            if city:
+                places.extend(city.places)
+
+    # Filter places based on amenities
+    if amenities_ids:
+        amenities = [storage.get(Amenity, amenity_id)
+                     for amenity_id in amenities_ids]
+        places = [place for place in places if all(
+                  amenity in place.amenities for amenity in amenities
+                  )]
+
+    places_list = [place.to_dict() for place in set(places)]
+
+    return jsonify(places_list), 200
