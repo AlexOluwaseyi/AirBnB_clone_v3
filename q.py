@@ -55,10 +55,24 @@ if __name__ == "__main__":
     """
     r = requests.get("http://0.0.0.0:5000/api/v1/places/{}/amenities".format(place_id))
     r_j = r.json()
-    amenity_id = r_j[0].get('id')
+    fetched_amenity_ids = []
+    for amenity_j in r_j:
+        fetched_amenity_ids.append(amenity_j.get('id'))
+    from models import storage
+    all_amenities = storage.all("Amenity")
+    amenity_id = None
+    for a_id in list(all_amenities.keys()):
+        if a_id not in fetched_amenity_ids:
+            amenity_id = a_id
+            break
 
     """ POST /api/v1/places/<place_id>/amenities/<amenity_id>
     """
-    place_id = "nop"
     r = requests.post("http://0.0.0.0:5000/api/v1/places/{}/amenities/{}".format(place_id, amenity_id))
     print(r.status_code)
+
+    r = requests.get("http://0.0.0.0:5000/api/v1/places/{}/amenities".format(place_id))
+    r_j = r.json()
+    for amenity_j in r_j:
+        if amenity_j.get('id') == amenity_id:
+            print("OK")
