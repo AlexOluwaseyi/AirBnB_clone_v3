@@ -113,3 +113,50 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    @unittest.skipIf(models.storage_t == 'db', "testing db storage")
+    def test_get_retrieve_one_object(self):
+        """Test get() retrieves just one object with right id"""
+        obj = State()
+        obj.name = "Ogun"
+        obj.save()
+        search_id = obj.id
+        class_name = State
+        cls_object = models.storage.get(class_name, search_id)
+        self.assertTrue(isinstance(obj, class_name))
+        self.assertTrue(isinstance(cls_object, class_name))
+
+    @unittest.skipIf(models.storage_t == 'db', "testing db storage")
+    def test_get_with_wrong_id_return_none(self):
+        """Test get() return none if wrong id or not found"""
+        obj = State()
+        obj.name = "Ogun"
+        obj.save()
+        search_id = obj.id
+        class_name = State
+        cls_object = models.storage.get(class_name,
+                                        "ffffffff-ff79-dfdc-rrra-wwdqqqqcdyyc")
+        self.assertTrue(cls_object is None)
+
+    @unittest.skipIf(models.storage_t == 'db', "testing db storage")
+    def test_count_all_objects_if_no_class_passed(self):
+        """Test count() returns the count of all objects in storage"""
+        obj = State()
+        obj.name = "Ogun"
+        obj.save()
+        models.storage.reload()
+        all_count = models.storage.count()
+        expected_count = len(models.storage.all())
+        self.assertEqual(all_count, expected_count)
+
+    @unittest.skipIf(models.storage_t == 'db', "testing db storage")
+    def test_count_objects_with_given_class(self):
+        """Test count() returns the number of objects in storage
+        matching the given class"""
+        obj = State()
+        obj.name = "Ogun"
+        obj.save()
+        models.storage.reload()
+        cls_count = models.storage.count(State)
+        expected_count = len(models.storage.all(State))
+        self.assertEqual(cls_count, expected_count)
