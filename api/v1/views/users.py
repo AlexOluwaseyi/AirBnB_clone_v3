@@ -24,14 +24,14 @@ app = Flask(__name__)
 def get_all_users():
     """ Get list of user in User object"""
     # Use the get method to get states based on state_id
-    users = storage.all(user)
+    users = storage.all(User)
 
     # If state not found (or incorrect ID)
     if users is None:
         abort(404)
 
-    allUser = [eachUser.to_dict() for eachUser in users]
-    return jsonify(allUser)
+    allUser = [eachUser.to_dict() for eachUser in users.values()]
+    return jsonify(allUser), 200
 
 
 @app_views.route("/users/<user_id>/", methods=['GET'], strict_slashes=False)
