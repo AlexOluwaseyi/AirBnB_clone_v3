@@ -74,11 +74,11 @@ def create_user():
     if not data:
         abort(400, 'Not a JSON')
 
-    if 'email' not in data.keys():
+    if 'email' not in data:
         abort(400, 'Missing eail')
-    if 'password' not in data.keys():
+    if 'password' not in data:
         abort(400, 'Missing password')
-    if 'password' in data.keys():
+    if 'password' in data:
         data['password'] = hashlib.md5(data['password'])
 
     # Create a new user from the User model
