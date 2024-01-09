@@ -11,9 +11,6 @@ Creates a User: POST /api/v1/users
 """
 
 from flask import Flask, jsonify, abort, request
-from models.state import State
-from models.city import City
-from models.amenity import Amenity
 from models.user import User
 from models import storage
 from api.v1.views import app_views
@@ -23,7 +20,7 @@ app = Flask(__name__)
 
 @app_views.route("/users/", methods=['GET'],
                  strict_slashes=False)
-def get_all_user():
+def get_all_users():
     """ Get list of user in User object"""
     # Use the get method to get states based on state_id
     users = storage.all(user)
@@ -56,7 +53,7 @@ def del_user(user_id):
     user = storage.get(User, user_id)
 
     # Check user is found (or incorrect user_id
-    if not usaer:
+    if not user:
         abort(404)
 
     # Delete and save changes to storgae
@@ -70,7 +67,7 @@ def del_user(user_id):
 def create_user():
     """Creates a User and returns the user with a status code of 201"""
     # Get data for new user
-    data = request.get_json
+    data = request.get_json()
 
     # Check if data is JSON and if other keys are present
     if not data:
@@ -101,7 +98,7 @@ def update_user(user_id):
     if not user:
         abort(404)
 
-    data = request.get_json
+    data = request.get_json()
 
     # Checked if the data meets recovery
     if not data:
@@ -109,7 +106,7 @@ def update_user(user_id):
 
     for key, value in data.items():
         if key not in ['id', 'email', 'created_at', 'updated_at']:
-            user[key] = value
+            setattr(user, key, value)
 
     storage.save()
     return jsonify(user.to_dict()), 200
