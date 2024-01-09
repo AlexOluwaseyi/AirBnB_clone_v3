@@ -73,9 +73,9 @@ def create_user():
     if not data:
         abort(400, 'Not a JSON')
 
-    if 'email' not in data:
+    if 'email' not in data.keys():
         abort(400, 'Missing eail')
-    if 'password' not in data:
+    if 'password' not in data.keys():
         abort(400, 'Missing password')
 
     # Create a new user from the User model
