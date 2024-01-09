@@ -6,10 +6,12 @@ from flask import Flask, Blueprint, request, make_response, jsonify
 from os import getenv
 from models import storage
 from api.v1.views import app_views
+from flask_cors import CORS
 
 
 app = Flask(__name__)
 app.register_blueprint(app_views, url_prefix="/api/v1")
+CORS(app, resources={r"/api/*": {"origins": "0.0.0.0"}})
 
 
 @app.errorhandler(404)
