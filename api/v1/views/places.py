@@ -100,6 +100,6 @@ def update_place(place_id):
 
     for key, data in response.items():
         if key not in attr_list:
-            setatrr(place, key, data)
+            setattr(place, key, data)
     place.save()
     return jsonify(place.to_dict()), 200
