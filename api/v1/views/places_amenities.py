@@ -78,11 +78,11 @@ def link_amenity_to_place(place_id, amenity_id):
     if storage_t == "db":
         for linked_amenity in place.amenities:
             if linked_amenity.id == amenity.id:
-                return jsonify(amenity.to_dict()), 201
+                return jsonify(amenity.to_dict()), 200
         place.amenities.append(amenity)
         return jsonify(amenity.to_dict()), 201
     else:
         if amenity_id in place.amenity_ids:
-            return jsonify(amenity.to_dict()), 201
+            return jsonify(amenity.to_dict()), 200
         place.amenity_ids.append(amenity_id)
         return jsonify(amenity.to_dict()), 201
