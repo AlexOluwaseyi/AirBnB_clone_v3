@@ -87,7 +87,7 @@ def update_amenity(amenity_id):
 
     for key, data in response.items():
         if key not in attr_list:
-            setattr(state, key, data)
+            setattr(amenity, key, data)
     amenity.save()
     amenity_dict = amenity.to_dict()
     return jsonify(amenity_dict), 200
