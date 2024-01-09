@@ -21,24 +21,44 @@ if __name__ == "__main__":
     if state_id is None:
         print("State with cities not found")
     
-    """ Fetch cities
+    """ get city
     """
     r = requests.get("http://0.0.0.0:5000/api/v1/states/{}/cities".format(state_id))
     r_j = r.json()
-    city_id = r_j[0].get('id')
-
-    """ PUT /api/v1/cities/<city_id>
-    """
-    r = requests.put("http://0.0.0.0:5000/api/v1/cities/{}".format(city_id), data=json.dumps({ 'name': "NewName" }), headers={ 'Content-Type': "application/json" })
-    print(r.status_code)
-    r_j = r.json()
-    print(r_j.get('id') is None)
-    print(r_j.get('name') == "NewName")
-    
-    """ Fetch cities
-    """
-    r = requests.get("http://0.0.0.0:5000/api/v1/states/{}/cities".format(state_id))
-    r_j = r.json()
+    city_id = None
     for city_j in r_j:
-        if city_j.get('id') == city_id:
-            print(city_j.get('name') == "NewName")
+        rc = requests.get("http://0.0.0.0:5000/api/v1/cities/{}/places".format(city_j.get('id')))
+        rc_j = rc.json()
+        if len(rc_j) != 0:
+            city_id = city_j.get('id')
+            break
+    
+    if city_id is None:
+        print("City with places not found")
+
+    """ get place
+    """
+    r = requests.get("http://0.0.0.0:5000/api/v1/cities/{}/places".format(city_id))
+    r_j = r.json()
+    place_id = None
+    for place_j in r_j:
+        rp = requests.get("http://0.0.0.0:5000/api/v1/places/{}/amenities".format(place_j.get('id')))
+        rp_j = rp.json()
+        if len(rp_j) != 0:
+            place_id = place_j.get('id')
+            break
+    
+    if place_id is None:
+        print("Place without amenities not found")
+    
+    """ get amenity
+    """
+    r = requests.get("http://0.0.0.0:5000/api/v1/places/{}/amenities".format(place_id))
+    r_j = r.json()
+    amenity_id = r_j[0].get('id')
+
+    """ POST /api/v1/places/<place_id>/amenities/<amenity_id>
+    """
+    place_id = "nop"
+    r = requests.post("http://0.0.0.0:5000/api/v1/places/{}/amenities/{}".format(place_id, amenity_id))
+    print(r.status_code)

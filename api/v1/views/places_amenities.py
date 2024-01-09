@@ -62,7 +62,7 @@ def remove_amenity_from_place(place_id, amenity_id):
 
 @app_views.route("/places/<place_id>/amenities/<amenity_id>",
                  methods=["POST"], strict_slashes=False)
-def link_amenity_to_place():
+def link_amenity_to_place(place_id, amenity_id):
     """
     Link a Amenity object to a Place:
     POST /api/v1/places/<place_id>/amenities/<amenity_id>
