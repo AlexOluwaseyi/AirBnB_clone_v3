@@ -78,6 +78,8 @@ def create_user():
         abort(400, 'Missing eail')
     if 'password' not in data.keys():
         abort(400, 'Missing password')
+    if 'password' in data.keys():
+        data['password'] = hashlib.md5(data['password'].encode()).hexdigest()
 
     # Create a new user from the User model
     new_user = User(**data)
